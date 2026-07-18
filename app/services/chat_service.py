@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.llm.qwen_client import ask_qwen
+from app.llm.gemini_client import ask_gemini
 from app.rag.retrieve import retrieve_context
 from app.services.memory_service import (
     append_message,
@@ -26,7 +26,7 @@ def chat(
     memory_lines = get_recent_memory_lines(db, conversation.id, limit=6)
 
     chunks = retrieve_context(message, top_k=top_k)
-    reply = ask_qwen(
+    reply = ask_gemini(
         message=message,
         context_chunks=[c["text"] for c in chunks],
         memory_lines=memory_lines,
