@@ -47,3 +47,29 @@ def ask_gemini(
     except Exception as e:
         print(f"[SalonAI] Gemini API error: {e}")
         return "I'm sorry, SalonAI encountered an issue. Please try again later or contact the salon for assistance."
+
+
+def rewrite_query(query: str) -> str:
+    if not GEMINI_API_KEY:
+        return query
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=(
+                "Fix any spelling errors, typos, grammatical issues, or slang in the following "
+                "user query to make it suitable for a semantic search engine. "
+                "Output ONLY the corrected query string and nothing else.\n"
+                f"Query: {query}"
+            ),
+            config=types.GenerateContentConfig(
+                temperature=0.0,
+            ),
+        )
+        if response.text:
+            return response.text.strip()
+        return query
+    except Exception as e:
+        print(f"[SalonAI] Query rewriting error: {e}")
+        return query
+

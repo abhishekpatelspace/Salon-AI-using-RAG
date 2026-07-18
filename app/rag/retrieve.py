@@ -1,3 +1,4 @@
+from app.llm.gemini_client import rewrite_query
 from app.rag.vector_db import get_collection
 
 
@@ -6,9 +7,10 @@ def retrieve_context(query: str, top_k: int = 4) -> list[dict]:
 		return []
 
 	try:
+		corrected_query = rewrite_query(query)
 		collection = get_collection()
 		result = collection.query(
-			query_texts=[query],
+			query_texts=[corrected_query],
 			n_results=top_k,
 			include=["documents", "metadatas", "distances"],
 		)

@@ -9,3 +9,5 @@ pymysql
 pydantic
 python-multipart
 pymongo
+pypdf
+

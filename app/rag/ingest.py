@@ -5,7 +5,8 @@ from pathlib import Path
 from app.rag.vector_db import get_collection, reset_collection
 
 
-SUPPORTED_EXTENSIONS = {".txt", ".md", ".json"}
+SUPPORTED_EXTENSIONS = {".txt", ".md", ".json", ".pdf"}
+
 
 
 def _chunk_text(text: str, chunk_size: int = 900, overlap: int = 140) -> list[str]:
@@ -25,9 +26,23 @@ def _chunk_text(text: str, chunk_size: int = 900, overlap: int = 140) -> list[st
 
 
 def _read_file_text(path: Path) -> str:
-	if path.suffix.lower() == ".json":
+	suffix = path.suffix.lower()
+	if suffix == ".json":
 		raw = json.loads(path.read_text(encoding="utf-8"))
 		return json.dumps(raw, ensure_ascii=True)
+	elif suffix == ".pdf":
+		try:
+			from pypdf import PdfReader
+			reader = PdfReader(path)
+			text = []
+			for page in reader.pages:
+				page_text = page.extract_text()
+				if page_text:
+					text.append(page_text)
+			return "\n".join(text)
+		except Exception as e:
+			print(f"[SalonAI] Error reading PDF {path}: {e}")
+			return ""
 	return path.read_text(encoding="utf-8")
 
 
