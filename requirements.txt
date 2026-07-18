@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+jinja2
+python-dotenv
+google-genai
+chromadb
+sqlalchemy
+pymysql
+pydantic
+python-multipart
+pymongo
